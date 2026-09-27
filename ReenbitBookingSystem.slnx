@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="CLAUDE.md" />
+  </Folder>
+  <Project Path="BookingSystem.Tests/BookingSystem.Tests.csproj" />
+  <Project Path="reenbitbookingsystem.client/reenbitbookingsystem.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="ReenbitBookingSystem.Server/ReenbitBookingSystem.Server.csproj" />
+</Solution>
