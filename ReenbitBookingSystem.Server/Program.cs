@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ReenbitBookingSystem.Server.Data;
+using ReenbitBookingSystem.Server.Hubs;
 using ReenbitBookingSystem.Server.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddOpenApi();
 
@@ -19,10 +22,15 @@ builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
 
 var app = builder.Build();
 
+app.UseCors(policy => policy
+    .SetIsOriginAllowed(origin => true)
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials());
+
 app.UseDefaultFiles();
 app.MapStaticAssets();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -36,6 +44,8 @@ app.UseAuthorization();
 app.MapGroup("/api/auth").MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
+
+app.MapHub<BookingHub>("/bookingHub");
 
 app.MapFallbackToFile("/index.html");
 

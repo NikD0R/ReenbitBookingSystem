@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using ReenbitBookingSystem.Server.Data;
+using ReenbitBookingSystem.Server.Hubs;
 using System.Security.Claims;
 
 namespace ReenbitBookingSystem.Server.Controllers
@@ -12,10 +14,17 @@ namespace ReenbitBookingSystem.Server.Controllers
     public class SlotsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHubContext<BookingHub> _hubContext;
 
         public SlotsController(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        public SlotsController(ApplicationDbContext context, IHubContext<BookingHub> hubContext)
+        {
+            _context = context;
+            _hubContext = hubContext;
         }
 
         [HttpPost("{slotId}/book")]
@@ -41,6 +50,8 @@ namespace ReenbitBookingSystem.Server.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                await _hubContext.Clients.All.SendAsync("SlotStatusChanged", slotId, true);
 
                 return Ok(new { message = "Успішно заброньовано!" });
             }
