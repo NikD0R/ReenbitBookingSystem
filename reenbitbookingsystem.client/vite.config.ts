@@ -47,15 +47,16 @@ export default defineConfig({
     },
     server: {
         proxy: {
-            '^/weatherforecast': {
+            '^/api': {
                 target,
                 secure: false
+            },
+            '^/bookingHub': {
+                target,
+                secure: false,
+                ws: true
             }
         },
-        port: parseInt(env.DEV_SERVER_PORT || '59162'),
-        https: {
-            key: fs.readFileSync(keyFilePath),
-            cert: fs.readFileSync(certFilePath),
-        }
+        port: 5173,
     }
-})
+});
